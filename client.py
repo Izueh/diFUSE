@@ -121,7 +121,7 @@ class Memory(LoggingMixIn, Operations):
         attribute = self.requestserver(0x10, data, ip, 8080)
         try:
             return attribute[name]
-        except:
+        except BaseException:
             raise FuseOSError(ENOENT)
 
     def listxattr(self, path):
@@ -131,8 +131,14 @@ class Memory(LoggingMixIn, Operations):
 
     def mkdir(self, path, mode):
         print("mkdir")
-        self.files[path] = dict(st_mode=(S_IFDIR | mode), st_nlink=2,
-                                st_size=0, st_ctime=time(), st_mtime=time(), st_atime=time())
+        self.files[path] = dict(
+            st_mode=(
+                S_IFDIR | mode),
+            st_nlink=2,
+            st_size=0,
+            st_ctime=time(),
+            st_mtime=time(),
+            st_atime=time())
         self.files['/']['st_nlink'] += 1
 
     def open(self, path, flags):

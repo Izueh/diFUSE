@@ -8,9 +8,6 @@ import logging
 import sys
 
 
-# TODO: add salted hash
-# TODO: add function to remove node if connection terminated
-
 def list_dir(fd, addr, req):
     ips = hash2ip.values()
     file_list = []
@@ -28,7 +25,7 @@ def list_dir(fd, addr, req):
     res = {}
     res['status'] = 0
     res['length'] = len(data)
-    fd.sendall(difuse_response.build(res)+data)
+    fd.sendall(difuse_response.build(res) + data)
 
 
 def lookup(fd, addr, req):
@@ -48,7 +45,7 @@ def lookup(fd, addr, req):
     res['status'] = 0
     res['length'] = len(data)
     res = difuse_response.build(res)
-    fd.sendall(res+data)
+    fd.sendall(res + data)
 
 
 def create(fd, addr, req):

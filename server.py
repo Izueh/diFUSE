@@ -12,7 +12,6 @@ import signal
 import sys
 
 
-# TODO: add file migration functionality
 def reqboot(op, data):
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.connect((argv[1], int(argv[2])))
@@ -39,8 +38,6 @@ def join():
     my_id = data['id']
     if 'ip' in data:
         recv_files(data['ip'], data['id'])
-
-    # TODO: receive and call recv_files
 
 
 def leave():
@@ -76,7 +73,6 @@ def create(fd, req, addr):
     f.close()
     res = {'status': 0, 'length': 0}
     fd.sendall(difuse_response.build(res))
-
 
 
 def write(fd, req, addr):
@@ -124,17 +120,18 @@ def stat(fd, req, addr):
     filepath = '/'.join((file_dir, req['file']))
     data = {}
     if(os.path.isfile(filepath)):
-            info = os.stat(filepath)
-            stat = dict(st_mode=info.st_mode, st_nlink=info.st_nlink,
-                        st_size=info.st_size, st_ctime=info.st_ctime,
-                        st_mtime=info.st_mtime, st_atime=info.st_atime)
-            data = stat
+        info = os.stat(filepath)
+        stat = dict(st_mode=info.st_mode, st_nlink=info.st_nlink,
+                    st_size=info.st_size, st_ctime=info.st_ctime,
+                    st_mtime=info.st_mtime, st_atime=info.st_atime)
+        data = stat
     data = dumps(data).encode('utf-8')
     res = {}
     res['status'] = 0
     res['length'] = len(data)
     h = difuse_response.build(res)
     fd.sendall(h + data)
+
 
 def rm(fd, req, addr):
     data = {'file': req['file']}
@@ -161,7 +158,7 @@ def recv_help(ip, my_hash):
     req['op'] = 0x16
     req['length'] = len(data)
     req = difuse_request.build(req)
-    s.sendall(req+data)
+    s.sendall(req + data)
     s.close()
     s, conn = listenfd.accept()
     while(1):
@@ -207,10 +204,11 @@ def send_help(ip, port, other_hash):
                     data = data.decode('utf-8')
                     f.close()
                     os.unlink(fname)
-                    data = (dumps({'fname': fname, 'data': data})).encode('utf-8')
+                    data = (dumps({'fname': fname, 'data': data})).encode(
+                        'utf-8')
                     req = {'op': 0, 'length': len(data)}
                     req = difuse_request.build(req)
-                    s.sendall(req+data)
+                    s.sendall(req + data)
             else:
                 if h < other_hash or h > my_id or leaving:
                     fname = '/'.join((file_dir, fname))
@@ -219,10 +217,11 @@ def send_help(ip, port, other_hash):
                     data = data.decode('utf-8')
                     f.close()
                     os.unlink(fname)
-                    data = (dumps({'fname': fname, 'data': data})).encode('utf-8')
+                    data = (dumps({'fname': fname, 'data': data})).encode(
+                        'utf-8')
                     req = {'op': 0, 'length': len(data)}
                     req = difuse_request.build(req)
-                    s.sendall(req+data)
+                    s.sendall(req + data)
 
 
 def send_files(fd, req, addr):
